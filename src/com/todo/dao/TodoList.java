@@ -142,10 +142,6 @@ public class TodoList {
 		}
 		return count;
 	}
-
-	public void sortByName() {
-		Collections.sort(list, new TodoSortByName());
-	}
 	
 	public void sortByDate() {
 		Statement stmt;
