@@ -61,7 +61,6 @@ public class TodoMain {
 				break;
 
 			case "exit":
-				TodoUtil.saveList(l, "todolist.txt");
 				quit = true;
 				break;
 				

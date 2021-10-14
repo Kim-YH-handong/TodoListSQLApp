@@ -161,45 +161,6 @@ public class TodoUtil {
 		}
 		System.out.printf("\n총 %d개의 카테고리가 등록되어 있습니다.", set.size());
 	}
-	
-	public static void saveList(TodoList l, String filename) {
-		Writer w;
-		try {
-			w = new FileWriter(filename);
 			
-			for(TodoItem item : l.getList()) {
-				w.write(item.toSaveString());
-			}
-			w.close();
-			System.out.println("입력하신 정보가 모두 저장되었습니다!");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public static void loadList(TodoList l) {
-		Statement stmt;
-		try {
-			stmt = conn.createStatement();
-			String sql = "SELECT * FROM list";
-			ResultSet rs = stmt.executeQuery(sql);
-			while(rs.next()){
-				int id = rs.getInt("id");
-				String category = rs.getString("category");
-				String title = rs.getString("title");
-				String description = rs.getString("memo");
-				String due_date = rs.getString("due_date");
-				String current_date = rs.getString("current_date");
-				TodoItem t = new TodoItem(category, title, description, current_date, due_date);
-				t.setId(id);
-				t.setCurrent_date(current_date);
-				l.addItem(t);
-			}
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}
-	}
-		
 	}
 
