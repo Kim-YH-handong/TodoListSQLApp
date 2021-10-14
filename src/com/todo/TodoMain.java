@@ -17,7 +17,7 @@ public class TodoMain {
 		do {
 			Menu.prompt();
 			
-			String choice = sc.nextLine();
+			String choice = sc.next();
 			switch (choice) {
 
 			case "add":
@@ -56,6 +56,25 @@ public class TodoMain {
 				TodoUtil.countCategory(l);
 				break;
 				
+			case "find":
+				String input = sc.next();
+				TodoUtil.findList(l, input);
+				break;
+				
+			case "find_cate":
+				String input2 = sc.next();
+				TodoUtil.findCate(l, input2);
+				break;
+				
+			case "comp":
+				int inputComp = sc.nextInt();
+				TodoUtil.completeItem(l, inputComp);
+				break;
+				
+			case "comp_ls":
+				break;
+				
+				
 			case "help":
 				Menu.displaymenu();
 				break;
@@ -65,23 +84,7 @@ public class TodoMain {
 				break;
 				
 			default:
-				if(choice.length() > 3) {
-					if(choice.length()>8) {
-						if(choice.substring(0, 9).equals("find_cate")) {
-							TodoUtil.findCate(l, choice.substring(9, choice.length()));
-							break;
-						}else {
-							System.out.println("위에 언급된 명령어를 입력해주세요(help - 도움말)");
-						}
-					}else if(choice.substring(0 ,4).equals("find")){
-						TodoUtil.findList(l, choice.substring(4, choice.length()));
-						break;
-					}else{
-						System.out.println("위에 언급된 명령어를 입력해주세요(help - 도움말)");
-					}
-				}else{
-					System.out.println("위에 언급된 명령어를 입력해주세요(help - 도움말)");					
-				}
+				System.out.println("위에 언급된 명령어를 입력해주세요(help - 도움말)");
 				break;
 			}	
 		} while (!quit);

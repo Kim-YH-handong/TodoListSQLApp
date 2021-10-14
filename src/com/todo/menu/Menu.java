@@ -15,6 +15,8 @@ public class Menu {
         System.out.println("find - find <키워드>");
         System.out.println("find_cate - find_cate <카테고리이름>");
         System.out.println("ls_cate - 카테고리 종류");
+        System.out.println("comp - comp <숫자>");
+        System.out.println("ls_comp - comp 출력");
         System.out.println("exit - 종료");
     }
     

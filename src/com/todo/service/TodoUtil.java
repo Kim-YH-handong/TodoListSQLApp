@@ -6,9 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 import java.sql.*;
 
@@ -43,7 +40,7 @@ public class TodoUtil {
 		System.out.printf("마감일자 입력(yyyy/mm/dd) > ");
 		due_date = sc.nextLine();
 		
-		TodoItem t = new TodoItem(category, title, desc, due_date);
+		TodoItem t = new TodoItem(category, title, desc, due_date, 0);
 		if(list.addItem(t) > 0)
 			System.out.println("추가되었습니다.");
 	}
@@ -59,7 +56,6 @@ public class TodoUtil {
 		if(l.deleteItem(index)>0) 
 			System.out.println("삭제되었습니다.");
 	}
-
 
 	public static void updateItem(TodoList l) {
 		
@@ -161,6 +157,14 @@ public class TodoUtil {
 		}
 		System.out.printf("\n총 %d개의 카테고리가 등록되어 있습니다.", set.size());
 	}
-			
+		
+	
+	public static void completeItem(TodoList l, int n) {
+		if(l.completeItem(n)==1) {
+			System.out.println("완료 체크하였습니다.");
+		}
 	}
+	}
+
+
 

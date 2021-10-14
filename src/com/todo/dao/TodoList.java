@@ -89,7 +89,8 @@ public class TodoList {
 				String description = rs.getString("memo");
 				String due_date = rs.getString("due_date");
 				String current_date = rs.getString("current_date");
-				TodoItem t = new TodoItem(category, title, description, current_date, due_date);
+				int completed = rs.getInt("comp");
+				TodoItem t = new TodoItem(category, title, description, current_date, due_date, completed);
 				t.setId(id);
 				t.setCurrent_date(current_date);
 				list.add(t);
@@ -114,7 +115,8 @@ public class TodoList {
 				String description = rs.getString("memo");
 				String due_date = rs.getString("due_date");
 				String current_date = rs.getString("current_date");
-				TodoItem t = new TodoItem(category, title, description, current_date, due_date);
+				int comp = rs.getInt("comp");
+				TodoItem t = new TodoItem(category, title, description, current_date, due_date, comp);
 				t.setId(id);
 				t.setCurrent_date(current_date);
 				list.add(t);
@@ -154,7 +156,8 @@ public class TodoList {
 				String description = rs.getString("memo");
 				String due_date = rs.getString("due_date");
 				String current_date = rs.getString("current_date");
-				TodoItem t = new TodoItem(category, title, description, current_date, due_date);
+				int comp = rs.getInt("comp");
+				TodoItem t = new TodoItem(category, title, description, current_date, due_date, comp);				
 				t.setId(id);
 				t.setCurrent_date(current_date);
 				System.out.println(t.toString());
@@ -173,10 +176,6 @@ public class TodoList {
 		}
 	}
 	
-	public void reverseList() {
-		Collections.reverse(list);
-	}
-	
 	public void updateList() {
 		Statement stmt;
 		try {
@@ -190,7 +189,8 @@ public class TodoList {
 				String description = rs.getString("memo");
 				String due_date = rs.getString("due_date");
 				String current_date = rs.getString("current_date");
-				TodoItem t = new TodoItem(category, title, description, current_date, due_date);
+				int comp = rs.getInt("comp");
+				TodoItem t = new TodoItem(category, title, description, current_date, due_date, comp);
 				t.setId(id);
 				t.setCurrent_date(current_date);
 				list.add(t);
@@ -200,15 +200,27 @@ public class TodoList {
 		}
 	}
 
-	public int indexOf(TodoItem t) {
-		return list.indexOf(t);
-	}
-
 	public Boolean isDuplicate(String title) {
 		for (TodoItem item : list) {
 			if (title.equals(item.getTitle())) return true;
 		}
 		return false;
+	}
+	
+	public int completeItem(int n) {
+		String sql = "update list set comp=?" + " where id = ?;";
+		PreparedStatement pstmt;
+		int count = 0;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, 1);
+			pstmt.setInt(2, n);
+			count = pstmt.executeUpdate();
+			pstmt.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return count;
 	}
 
 }
