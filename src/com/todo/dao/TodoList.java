@@ -1,28 +1,27 @@
 package com.todo.dao;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import com.todo.service.*;
+
+import com.todo.service.DbConnect;
 
 public class TodoList {
 	private List<TodoItem> list;
 	Connection conn;
-	
+
 	public TodoList() {
 		this.list = new ArrayList<TodoItem>();
 		this.conn = DbConnect.getConnection();
 	}
 
-	public int addItem(TodoItem t) {
-		String sql = "insert into list (title, memo, category, current_date, due_date)" + " values (?,?,?,?,?);";
+	public int addCateory(TodoItem t) {
+		String sql = "insert into category (category, numbers)"
+				+ " values (?,?);";
 		PreparedStatement pstmt;
 		int count = 0;
 		try {
@@ -32,16 +31,18 @@ public class TodoList {
 			pstmt.setString(3, t.getCategory());
 			pstmt.setString(4, t.getCurrent_date());
 			pstmt.setString(5, t.getDue_date());
+			pstmt.setInt(6, t.getIsCompleted());
 			count = pstmt.executeUpdate();
 			pstmt.close();
-		}catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return count;
 	}
-	
-	public int updateItem(TodoItem t) {
-		String sql = "update list set title=?,memo=?, category=?, current_date=?, due_date=?" + " where id = ?;";
+
+	public int addItem(TodoItem t) {
+		String sql = "insert into list (title, memo, category, current_date, due_date, comp)"
+				+ " values (?,?,?,?,?,?);";
 		PreparedStatement pstmt;
 		int count = 0;
 		try {
@@ -51,10 +52,32 @@ public class TodoList {
 			pstmt.setString(3, t.getCategory());
 			pstmt.setString(4, t.getCurrent_date());
 			pstmt.setString(5, t.getDue_date());
-			pstmt.setInt(6, t.getId());
+			pstmt.setInt(6, t.getIsCompleted());
 			count = pstmt.executeUpdate();
 			pstmt.close();
-		}catch(SQLException e){
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return count;
+	}
+
+	public int updateItem(TodoItem t) {
+		String sql = "update list set title=?,memo=?, category=?, current_date=?, due_date=?, comp=?, important=?" + " where id = ?;";
+		PreparedStatement pstmt;
+		int count = 0;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, t.getTitle());
+			pstmt.setString(2, t.getDesc());
+			pstmt.setString(3, t.getCategory());
+			pstmt.setString(4, t.getCurrent_date());
+			pstmt.setString(5, t.getDue_date());
+			pstmt.setInt(6, t.getIsCompleted());
+			pstmt.setInt(7, t.getImportant());
+			pstmt.setInt(8, t.getId());
+			count = pstmt.executeUpdate();
+			pstmt.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return count;
@@ -69,7 +92,7 @@ public class TodoList {
 			pstmt.setInt(1, index);
 			count = pstmt.executeUpdate();
 			pstmt.close();
-		}catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return count;
@@ -82,7 +105,7 @@ public class TodoList {
 			stmt = conn.createStatement();
 			String sql = "SELECT * FROM list";
 			ResultSet rs = stmt.executeQuery(sql);
-			while(rs.next()){
+			while (rs.next()) {
 				int id = rs.getInt("id");
 				String category = rs.getString("category");
 				String title = rs.getString("title");
@@ -90,12 +113,13 @@ public class TodoList {
 				String due_date = rs.getString("due_date");
 				String current_date = rs.getString("current_date");
 				int completed = rs.getInt("comp");
-				TodoItem t = new TodoItem(category, title, description, current_date, due_date, completed);
+				int important = rs.getInt("important");
+				TodoItem t = new TodoItem(category, title, description, current_date, due_date, completed, important);
 				t.setId(id);
 				t.setCurrent_date(current_date);
 				list.add(t);
 			}
-		}catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return list;
@@ -108,7 +132,7 @@ public class TodoList {
 			stmt = conn.createStatement();
 			String sql = "SELECT * FROM list " + query;
 			ResultSet rs = stmt.executeQuery(sql);
-			while(rs.next()){
+			while (rs.next()) {
 				int id = rs.getInt("id");
 				String category = rs.getString("category");
 				String title = rs.getString("title");
@@ -116,17 +140,18 @@ public class TodoList {
 				String due_date = rs.getString("due_date");
 				String current_date = rs.getString("current_date");
 				int comp = rs.getInt("comp");
-				TodoItem t = new TodoItem(category, title, description, current_date, due_date, comp);
+				int important = rs.getInt("important");
+				TodoItem t = new TodoItem(category, title, description, current_date, due_date, comp, important);
 				t.setId(id);
 				t.setCurrent_date(current_date);
 				list.add(t);
 			}
-		}catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return list;
 	}
-	
+
 	public int getCount() {
 		Statement stmt;
 		int count = 0;
@@ -137,19 +162,19 @@ public class TodoList {
 			rs.next();
 			count = rs.getInt("count(id)");
 			stmt.close();
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return count;
 	}
-	
+
 	public void sortByDate() {
 		Statement stmt;
 		try {
 			stmt = conn.createStatement();
 			String sql = "SELECT * FROM list ORDER BY current_date DESC";
 			ResultSet rs = stmt.executeQuery(sql);
-			while(rs.next()){
+			while (rs.next()) {
 				int id = rs.getInt("id");
 				String category = rs.getString("category");
 				String title = rs.getString("title");
@@ -157,12 +182,13 @@ public class TodoList {
 				String due_date = rs.getString("due_date");
 				String current_date = rs.getString("current_date");
 				int comp = rs.getInt("comp");
-				TodoItem t = new TodoItem(category, title, description, current_date, due_date, comp);				
+				int important = rs.getInt("important");
+				TodoItem t = new TodoItem(category, title, description, current_date, due_date, comp, important);
 				t.setId(id);
 				t.setCurrent_date(current_date);
 				System.out.println(t.toString());
 			}
-		}catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -171,18 +197,19 @@ public class TodoList {
 		int i = 1;
 		System.out.printf("[전체 목록, 총 %d개]", list.size());
 		for (TodoItem myitem : list) {
-			System.out.printf("\n%d. [%s] %s - %s - %s - %s",i, myitem.getCategory(),myitem.getTitle(), myitem.getDesc(), myitem.getDue_date(), myitem.getCurrent_date());
+			System.out.printf("\n%d. [%s] %s - %s - %s - %s", i, myitem.getCategory(), myitem.getTitle(),
+					myitem.getDesc(), myitem.getDue_date(), myitem.getCurrent_date());
 			i++;
 		}
 	}
-	
+
 	public void updateList() {
 		Statement stmt;
 		try {
 			stmt = conn.createStatement();
 			String sql = "SELECT * FROM list";
 			ResultSet rs = stmt.executeQuery(sql);
-			while(rs.next()){
+			while (rs.next()) {
 				int id = rs.getInt("id");
 				String category = rs.getString("category");
 				String title = rs.getString("title");
@@ -190,23 +217,25 @@ public class TodoList {
 				String due_date = rs.getString("due_date");
 				String current_date = rs.getString("current_date");
 				int comp = rs.getInt("comp");
-				TodoItem t = new TodoItem(category, title, description, current_date, due_date, comp);
+				int important = rs.getInt("important");
+				TodoItem t = new TodoItem(category, title, description, current_date, due_date, comp, important);
 				t.setId(id);
 				t.setCurrent_date(current_date);
 				list.add(t);
 			}
-		}catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public Boolean isDuplicate(String title) {
 		for (TodoItem item : list) {
-			if (title.equals(item.getTitle())) return true;
+			if (title.equals(item.getTitle()))
+				return true;
 		}
 		return false;
 	}
-	
+
 	public int completeItem(int n) {
 		String sql = "update list set comp=?" + " where id = ?;";
 		PreparedStatement pstmt;
@@ -217,7 +246,23 @@ public class TodoList {
 			pstmt.setInt(2, n);
 			count = pstmt.executeUpdate();
 			pstmt.close();
-		}catch(SQLException e){
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return count;
+	}
+
+	public int specializeItem(int n) {
+		String sql = "update list set important=?" + " where id = ?;";
+		PreparedStatement pstmt;
+		int count = 0;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, 1);
+			pstmt.setInt(2, n);
+			count = pstmt.executeUpdate();
+			pstmt.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return count;

@@ -11,16 +11,17 @@ public class TodoItem {
     private String current_date;
     private String due_date;
     private int is_completed;
+    private int important;
 
 
-    public TodoItem(String category, String title, String desc, String date, String duedate, int comp) {
+    public TodoItem(String category, String title, String desc, String date, String duedate, int comp, int important) {
     	this.category = category;
     	this.title = title;
     	this.desc = desc;
     	this.current_date = date;
     	this.due_date = duedate;
     	is_completed = comp;
-    	System.out.print(is_completed);
+    	this.important = important;
     }
     
     public TodoItem(String category, String title, String desc, String due_date){
@@ -32,7 +33,7 @@ public class TodoItem {
         this.due_date = due_date;
     }
     
-    public TodoItem(String category, String title, String desc, String due_date, int comp){
+    public TodoItem(String category, String title, String desc, String due_date, int comp, int important){
     	this.category = category;
         this.title=title;
         this.desc=desc;
@@ -40,6 +41,7 @@ public class TodoItem {
         this.current_date= f.format(new Date());
         this.due_date = due_date;
         is_completed = comp;
+        this.important = important;
     }
     
     public int getId() {
@@ -49,7 +51,6 @@ public class TodoItem {
     public void setId(int id) {
     	this.id = id;
     }
-    
     
     public String getTitle() {
         return title;
@@ -99,12 +100,28 @@ public class TodoItem {
         this.category = category;
     }
     
+    public int getImportant() {
+    	return important;
+    }
+    
+    public void setImportant(int important) {
+    	this.important = important;
+    }
+    
     public String toString() {
     	String result;
     	if(is_completed == 1) {
-        	result = id + " " + "[" + category + "] " + title + "[V] - " + desc + " - " + current_date + " - " + due_date;
+    		if(important == 1) {
+            	result = id + " " + "***[" + category + "] " + title + "[V] - " + desc + " - " + current_date + " - " + due_date;
+    		}else {
+            	result = id + " " + "[" + category + "] " + title + "[V] - " + desc + " - " + current_date + " - " + due_date;
+    		}
     	}else {
-        	result = id + " " + "[" + category + "] " + title + " - " + desc + " - " + current_date + " - " + due_date;
+    		if(important == 1) {
+            	result = id + " " + "***[" + category + "] " + title + " - " + desc + " - " + current_date + " - " + due_date;
+    		}else {
+            	result = id + " " + "[" + category + "] " + title + " - " + desc + " - " + current_date + " - " + due_date;
+    		}
     	}
     	return result;
     }

@@ -17,6 +17,8 @@ public class Menu {
         System.out.println("ls_cate - 카테고리 종류");
         System.out.println("comp - comp <숫자>");
         System.out.println("ls_comp - comp 출력");
+        System.out.println("ls_uncomp_date - uncomp 일정순 정렬");
+        System.out.println("special - 중요한 것 체크");
         System.out.println("exit - 종료");
     }
     

@@ -12,10 +12,12 @@ public class TodoMain {
 	
 		Scanner sc = new Scanner(System.in);
 		TodoList l = new TodoList();
+		TodoUtil.dueDateFunction(l);
 		boolean quit = false;
 		Menu.displaymenu();
 		do {
 			Menu.prompt();
+			TodoUtil.updateCategory(l);
 			
 			String choice = sc.next();
 			switch (choice) {
@@ -52,6 +54,10 @@ public class TodoMain {
 				TodoUtil.sortByName(l, "ORDER BY list.current_date DESC");
 				break;
 				
+			case "ls_uncomp_date":
+				TodoUtil.sortByUncompDate(l, "ORDER BY list.due_date");
+				break;
+				
 			case "ls_cate":
 				TodoUtil.countCategory(l);
 				break;
@@ -67,13 +73,18 @@ public class TodoMain {
 				break;
 				
 			case "comp":
-				int inputComp = sc.nextInt();
+				String inputComp = sc.nextLine();
 				TodoUtil.completeItem(l, inputComp);
 				break;
 				
-			case "comp_ls":
+			case "ls_comp":
+				TodoUtil.listComp(l);
 				break;
 				
+			case "special":
+				String inputSpecial = sc.nextLine();
+				TodoUtil.specializeItem(l, inputSpecial);
+				break;
 				
 			case "help":
 				Menu.displaymenu();
